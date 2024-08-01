@@ -1,6 +1,6 @@
-name: firebase
-description: A new brick created with the Devmy CLI.
-# repository: https://github.com/acadevmy/my_repo
+name: firebase_application_brick
+description: A brick which allows you to create a Firebase application
+repository: https://github.com/acadevmy/firebase-application-brick
 version: 0.1.0
 
 environment:
