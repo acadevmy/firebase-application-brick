@@ -1,0 +1,32 @@
+{
+  "parameters": {
+    "welcome_message": {
+      "defaultValue": {
+        "value": "Welcome to our app!"
+      },
+      "conditionalValues": {
+        "ios": {
+          "value": "Welcome to our iOS app!"
+        },
+        "android": {
+          "value": "Welcome to our Android app!"
+        }
+      }
+    },
+    "feature_x_enabled": {
+      "defaultValue": {
+        "value": "false"
+      }
+    }
+  },
+  "conditions": [
+    {
+      "name": "ios",
+      "expression": "device.os == 'iOS'"
+    },
+    {
+      "name": "android",
+      "expression": "device.os == 'Android'"
+    }
+  ]
+}

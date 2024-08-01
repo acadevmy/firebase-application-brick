@@ -1,0 +1,9 @@
+projects/**/*
+dist
+package.json
+package-lock.json
+.vscode
+.idea
+coverage
+data
+node_modules

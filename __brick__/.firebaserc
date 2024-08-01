@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "development": "{{firebaseEnvinroments.development}}",
+    "staging": "{{firebaseEnvinroments.staging}}",
+    "production": "{{firebaseEnvinroments.production}}"
+  }
+}
