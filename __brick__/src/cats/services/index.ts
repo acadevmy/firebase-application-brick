@@ -1,2 +1,2 @@
-export * from './cat.mapper';
-export * from './cat.service';
+export * from './cats.mapper';
+export * from './cats.service';

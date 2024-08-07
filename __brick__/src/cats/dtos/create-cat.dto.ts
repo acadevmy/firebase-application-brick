@@ -2,14 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
-export class CatDTO {
-  @Expose()
-  @ApiProperty({
-    description: 'the id of the cat',
-    example: 'eisghergrdij239r24',
-  })
-  public readonly id: string;
-
+export class CreateCatDTO {
   @Expose()
   @ApiProperty({
     description: 'the name of the cat',
@@ -17,8 +10,7 @@ export class CatDTO {
   })
   public readonly name: string;
 
-  public constructor(opts: Readonly<CatDTO>) {
-    this.id = opts.id;
+  public constructor(opts: Readonly<CreateCatDTO>) {
     this.name = opts.name;
   }
 }

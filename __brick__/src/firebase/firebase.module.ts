@@ -1,5 +1,6 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
 import admin from 'firebase-admin';
+import { memoize } from 'lodash-es';
 import { FireormModule } from 'nestjs-fireorm';
 
 import {
@@ -16,7 +17,7 @@ import Firestore = admin.firestore.Firestore;
 export class FirebaseModule {
   private static readonly PROVIDERS: Array<Provider> = [
     {
-      useFactory: () => admin.initializeApp(),
+      useFactory: memoize(() => admin.initializeApp()),
       provide: FIREBASE_APP,
     },
     {

@@ -1,12 +1,12 @@
-import { setGlobalOptions } from 'firebase-functions/v2';
+// We import the global options as the first thing to ensure that all configurations
+// are applied to all Firebase functions before they are defined or imported.
+import './global-options';
 
-setGlobalOptions({
-  region: 'europe-west3',
-  memory: '1GiB',
-  timeoutSeconds: 540,
-  maxInstances: 10,
-  concurrency: 5,
-  minInstances: 2,
-});
+import { createRestApi } from './nestjs-firebase-adapter';
 
-export * from './cats';
+// Add here your triggers exports
+export * from './cats/functions';
+
+// Remove this line in case the application
+// does not require the implementation of rest api.
+export const api = createRestApi(() => import('./api.module'));

@@ -5,4 +5,4 @@ import { FirebaseModule } from './firebase';
 @Module({
   imports: [FirebaseModule.forRoot()],
 })
-export class AppModule {}
+export class TriggersModule {}

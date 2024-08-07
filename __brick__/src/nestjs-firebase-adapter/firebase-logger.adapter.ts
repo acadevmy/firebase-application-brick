@@ -1,5 +1,4 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-
 import { LoggerService } from '@nestjs/common';
 import { logger } from 'firebase-functions';
 

@@ -1,1 +1,1 @@
-export * from './cat.function';
+export * from './find-all-cats.function';

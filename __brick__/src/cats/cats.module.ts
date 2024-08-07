@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { FireormModule } from 'nestjs-fireorm';
 
+import { CatsController } from './controllers/cats.controller';
 import { Cat } from './entities';
-import CatHandler from './handlers/cat.handler';
-import CatRequestHandler from './handlers/cat-request.handler';
-import { CatMapper, CatService } from './services';
+import { CatsMapper, CatsService } from './services';
 
 @Module({
+  controllers: [CatsController],
   imports: [FireormModule.forFeature([Cat])],
-  providers: [CatService, CatMapper, CatHandler, CatRequestHandler],
+  providers: [CatsService, CatsMapper],
+  exports: [CatsService],
 })
 export default class CatsModule {}
