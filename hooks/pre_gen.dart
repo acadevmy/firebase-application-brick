@@ -44,7 +44,7 @@ Future<void> run(HookContext context) async {
   final vault = Vault(Directory.current.parent.parent);
   final vaultFirebaseTokenKey = '${applicationName.constantCase}_FIREBASE_TOKEN';
 
-  ['staging', 'production'].forEach((environment) {
+  ['development', 'staging', 'production'].forEach((environment) {
     vault.pull(environment);
     vault.addVariable(environment, vaultFirebaseTokenKey, token);
     vault.push(environment);

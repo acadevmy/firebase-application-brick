@@ -15,7 +15,8 @@ class Vault {
   }
 
   void addVariable(String environment, String name, dynamic value) {
-    final dotenv = File.fromUri(directory.uri.resolve('.env.$environment'));
+    final envName = environment == 'development' ? '.env': '.env.$environment';
+    final dotenv = File.fromUri(directory.uri.resolve(envName));
     dotenv.writeAsStringSync('\n$name=$value', mode: FileMode.append);
   }
 }
