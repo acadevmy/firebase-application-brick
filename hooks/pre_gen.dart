@@ -7,34 +7,19 @@ import 'constants.dart';
 import 'vault.dart';
 
 Future<void> run(HookContext context) async {
-  final token = runFirebaseLogin(context);
+  final Map<String, Project?> selectedProjects = <String, Project?>{};
+  for (final environment in ['development', 'staging', 'ci', 'production']) {
+    final token = runFirebaseLogin(context);
 
-  final projects = await runFirebaseProjectList(context, token);
+    final projects = await runFirebaseProjectList(context, token);
+    selectedProjects[environment] = chooseProject(context: context, env: environment, projects: projects);
+  }
 
-  final envinroments = <String, String>{
-    'development': chooseProject(
-          context: context,
-          env: 'development',
-          projects: projects,
-        )?.id ??
-        '',
-    'staging': chooseProject(
-          context: context,
-          env: 'staging',
-          projects: projects,
-        )?.id ??
-        '',
-    'production': chooseProject(
-          context: context,
-          env: 'production',
-          projects: projects,
-        )?.id ??
-        '',
-  };
+  final Map<String, String> environments = selectedProjects.map((key, value) => MapEntry(key, value?.id ?? ''));
 
-  context.vars.putIfAbsent('firebaseEnvinroments', () => envinroments);
+  context.vars.putIfAbsent('firebaseEnvinroments', () => environments);
 
-  if (envinroments.values.any((project) => project.isEmpty)) {
+  if (environments.values.any((project) => project.isEmpty)) {
     context.logger.alert(
       'Remember to modify the .firebaserc file for the unconfigured environments.',
     );
@@ -44,10 +29,14 @@ Future<void> run(HookContext context) async {
   final vault = Vault(Directory.current.parent.parent);
   final vaultFirebaseTokenKey = '${applicationName.constantCase}_FIREBASE_TOKEN';
 
-  ['development', 'staging', 'production'].forEach((environment) {
+  selectedProjects.entries.whereType<MapEntry<String, Project>>().forEach((entryProject) {
+    final environment = entryProject.key;
+    final token = entryProject.value.firebaseToken;
+
     vault.pull(environment);
     vault.addVariable(environment, vaultFirebaseTokenKey, token);
     vault.push(environment);
+
     context.logger.info('🔐 Stored $vaultFirebaseTokenKey for .env.vault $environment');
   });
 
@@ -62,14 +51,14 @@ Future<List<Project>> runFirebaseProjectList(HookContext context, String token) 
 
   final projectsTable = projectsTableResult.stdout.toString();
 
-  return parseProjects(projectsTable);
+  return parseProjects(projectsTable, token);
 }
 
 String runFirebaseLogin(HookContext context) {
   return context.logger.prompt('Specify firebase token (pnpm dlx firebase-tools login:ci):');
 }
 
-List<Project> parseProjects(String table) {
+List<Project> parseProjects(String table, String firebaseToken) {
   List<Project> projects = [];
   List<String> lines = table.split('\n');
 
@@ -81,7 +70,7 @@ List<Project> parseProjects(String table) {
         String projectDisplayName = columns[1];
         String projectId = columns[2]
             .replaceAll(' (current)', ''); // Rimuove "(current)" se presente
-        projects.add(Project(projectDisplayName, projectId));
+        projects.add(Project(projectDisplayName, projectId, firebaseToken));
       }
     }
   }
@@ -94,7 +83,7 @@ Project? chooseProject({
   required String env,
   required List<Project> projects,
 }) {
-  final projectsWithEmptyProject = [...projects, Project('Choose later', '')];
+  final projectsWithEmptyProject = [...projects, Project('Choose later', '', '')];
 
   final choosed = context.logger.chooseOne<Project>(
     "Choose project for $env",
@@ -112,8 +101,9 @@ Project? chooseProject({
 class Project {
   final String displayName;
   final String id;
+  final String firebaseToken;
 
-  Project(this.displayName, this.id);
+  Project(this.displayName, this.id, this.firebaseToken);
 
   @override
   String toString() => 'Project Display Name: $displayName, Project ID: $id';
