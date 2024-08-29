@@ -72,6 +72,7 @@ String runFirebaseLogin(HookContext context) {
   final processResult = Process.runSync(
     'pnpm',
     ['dlx', 'firebase-tools', 'login:ci'],
+    runInShell: true,
   );
 
   if (processResult.exitCode > 0) {
