@@ -12,10 +12,12 @@ Future<void> run(HookContext context) async {
     final token = runFirebaseLogin(context, environment);
 
     final projects = await runFirebaseProjectList(context, token);
-    selectedProjects[environment] = chooseProject(context: context, env: environment, projects: projects);
+    selectedProjects[environment] =
+        chooseProject(context: context, env: environment, projects: projects);
   }
 
-  final Map<String, String> environments = selectedProjects.map((key, value) => MapEntry(key, value?.id ?? ''));
+  final Map<String, String> environments =
+      selectedProjects.map((key, value) => MapEntry(key, value?.id ?? ''));
 
   context.vars.putIfAbsent('firebaseEnvinroments', () => environments);
 
@@ -27,9 +29,13 @@ Future<void> run(HookContext context) async {
 
   final String applicationName = context.vars[kApplicationNameKey];
   final vault = Vault(Directory.current.parent.parent);
-  final vaultFirebaseTokenKey = '${applicationName.constantCase}_FIREBASE_TOKEN';
+  final vaultFirebaseTokenKey =
+      '${applicationName.constantCase}_FIREBASE_TOKEN';
 
-  selectedProjects.entries.whereType<MapEntry<String, Project>>().forEach((entryProject) {
+  selectedProjects.entries
+      .where((entry) => entry.value != null)
+      .whereType<MapEntry<String, Project>>()
+      .forEach((entryProject) {
     final environment = entryProject.key;
     final token = entryProject.value.firebaseToken;
 
@@ -37,13 +43,15 @@ Future<void> run(HookContext context) async {
     vault.addVariable(environment, vaultFirebaseTokenKey, token);
     vault.push(environment);
 
-    context.logger.info('🔐 Stored $vaultFirebaseTokenKey for .env.vault $environment');
+    context.logger
+        .info('🔐 Stored $vaultFirebaseTokenKey for .env.vault $environment');
   });
 
   context.logger.success('Firebase configured successfully 🚀');
 }
 
-Future<List<Project>> runFirebaseProjectList(HookContext context, String token) async {
+Future<List<Project>> runFirebaseProjectList(
+    HookContext context, String token) async {
   final projectsTableResult = await Process.run(
     'pnpm',
     ['dlx', 'firebase-tools', 'projects:list', '--token', token],
@@ -55,7 +63,8 @@ Future<List<Project>> runFirebaseProjectList(HookContext context, String token) 
 }
 
 String runFirebaseLogin(HookContext context, String environment) {
-  return context.logger.prompt('Specify firebase token for $environment (pnpm dlx firebase-tools login:ci):');
+  return context.logger.prompt(
+      'Specify firebase token for $environment (pnpm dlx firebase-tools login:ci):');
 }
 
 List<Project> parseProjects(String table, String firebaseToken) {
@@ -83,7 +92,10 @@ Project? chooseProject({
   required String env,
   required List<Project> projects,
 }) {
-  final projectsWithEmptyProject = [...projects, Project('Choose later', '', '')];
+  final projectsWithEmptyProject = [
+    ...projects,
+    Project('Choose later', '', '')
+  ];
 
   final choosed = context.logger.chooseOne<Project>(
     "Choose project for $env",
