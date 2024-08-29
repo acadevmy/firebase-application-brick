@@ -34,10 +34,9 @@ Future<void> run(HookContext context) async {
 
   selectedProjects.entries
       .where((entry) => entry.value != null)
-      .whereType<MapEntry<String, Project>>()
       .forEach((entryProject) {
     final environment = entryProject.key;
-    final token = entryProject.value.firebaseToken;
+    final token = entryProject.value?.firebaseToken ?? '';
 
     vault.pull(environment);
     vault.addVariable(environment, vaultFirebaseTokenKey, token);
