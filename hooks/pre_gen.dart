@@ -32,9 +32,7 @@ Future<void> run(HookContext context) async {
   final vaultFirebaseTokenKey =
       '${applicationName.constantCase}_FIREBASE_TOKEN';
 
-  selectedProjects.entries
-      .where((entry) => entry.value != null)
-      .forEach((entryProject) {
+  selectedProjects.entries.forEach((entryProject) {
     final environment = entryProject.key;
     final token = entryProject.value?.firebaseToken ?? '';
 
