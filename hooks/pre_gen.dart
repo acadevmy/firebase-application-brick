@@ -55,8 +55,6 @@ Future<void> run(HookContext context) async {
 }
 
 Future<List<Project>> runFirebaseProjectList(HookContext context, String token) async {
-  await runFirebaseLogin(context);
-
   final projectsTableResult = await Process.run(
     'pnpm',
     ['dlx', 'firebase-tools', 'projects:list', '--token', token],
@@ -68,46 +66,7 @@ Future<List<Project>> runFirebaseProjectList(HookContext context, String token) 
 }
 
 String runFirebaseLogin(HookContext context) {
-  context.logger.info('🔑 Logging in Firebase tools...');
-  final processResult = Process.runSync(
-    'pnpm',
-    ['dlx', 'firebase-tools', 'login:ci'],
-    runInShell: true,
-  );
-
-  if (processResult.exitCode > 0) {
-    throw Exception(processResult.stderr?.toString()??'');
-  }
-
-  final response = processResult.stdout.toString();
-
-  return extractFirebaseToken(response);
-
-
-}
-
-/// This method extracts the Firebase CI token from the output of the `firebase login:ci` command.
-/// It uses a regular expression (RegExp) to identify a plausible token, which is typically a long
-/// alphanumeric string without spaces. The token can appear anywhere in the output, even as part of a sentence.
-/// - The RegExp looks for a string that is sufficiently long and consists of alphanumeric characters, dashes, or underscores.
-/// - The method ensures that URLs are not mistakenly identified as tokens by excluding common URL patterns.
-///
-/// If a valid token is found, it is returned; otherwise, the method throws an exception.
-String extractFirebaseToken(String commandOutput) {
-  final tokenPattern = RegExp(r'''\b[^\s]{40,}\b''', multiLine: true);
-
-  final matches = tokenPattern.allMatches(commandOutput);
-
-  for (final match in matches) {
-    final token = match.group(0);
-
-    if (token != null && !token.startsWith('http://') && !token.startsWith('https://')) {
-      return token; // Return the valid token
-    }
-  }
-
-  // If no valid token is found, throw an exception
-  throw Exception("Token not found in the output.");
+  return context.logger.prompt('Specify firebase token (pnpm dlx firebase-tools login:ci):');
 }
 
 List<Project> parseProjects(String table) {
