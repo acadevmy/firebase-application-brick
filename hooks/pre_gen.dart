@@ -9,7 +9,7 @@ import 'vault.dart';
 Future<void> run(HookContext context) async {
   final Map<String, Project?> selectedProjects = <String, Project?>{};
   for (final environment in ['development', 'staging', 'ci', 'production']) {
-    final token = runFirebaseLogin(context);
+    final token = runFirebaseLogin(context, environment);
 
     final projects = await runFirebaseProjectList(context, token);
     selectedProjects[environment] = chooseProject(context: context, env: environment, projects: projects);
@@ -54,8 +54,8 @@ Future<List<Project>> runFirebaseProjectList(HookContext context, String token) 
   return parseProjects(projectsTable, token);
 }
 
-String runFirebaseLogin(HookContext context) {
-  return context.logger.prompt('Specify firebase token (pnpm dlx firebase-tools login:ci):');
+String runFirebaseLogin(HookContext context, String environment) {
+  return context.logger.prompt('Specify firebase token for $environment (pnpm dlx firebase-tools login:ci):');
 }
 
 List<Project> parseProjects(String table, String firebaseToken) {
