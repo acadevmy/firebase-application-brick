@@ -15,7 +15,7 @@ import Firestore = admin.firestore.Firestore;
 
 @Module({})
 export class FirebaseModule {
-  private static readonly PROVIDERS: Array<Provider> = [
+  private static readonly PROVIDERS: Provider[] = [
     {
       useFactory: memoize(() => admin.initializeApp()),
       provide: FIREBASE_APP,

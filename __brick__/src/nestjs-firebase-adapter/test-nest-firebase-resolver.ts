@@ -5,7 +5,7 @@ import { LazyImport } from './types';
 import { resolveLazyType } from './utilities';
 
 export class TestNestFirebaseResolver implements NestFirebaseResolver {
-  constructor(private readonly app: INestApplicationContext) {}
+  public constructor(private readonly app: INestApplicationContext) {}
 
   public async resolveApplicationContext(): Promise<INestApplicationContext> {
     return this.app;
@@ -17,6 +17,7 @@ export class TestNestFirebaseResolver implements NestFirebaseResolver {
     service: LazyImport<T>,
   ): Promise<T> {
     const serviceType = await resolveLazyType(service);
+
     return this.app.get(serviceType);
   }
 }

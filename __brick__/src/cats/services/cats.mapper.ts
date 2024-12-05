@@ -9,7 +9,7 @@ export class CatsMapper {
     return new CatDTO(cat);
   }
 
-  public toDtos(cats: Array<Cat>): Array<CatDTO> {
+  public toDtos(cats: Cat[]): CatDTO[] {
     return cats.map((cat) => this.toDto(cat));
   }
 }

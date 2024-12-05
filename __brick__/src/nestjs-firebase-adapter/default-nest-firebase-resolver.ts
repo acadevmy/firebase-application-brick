@@ -8,10 +8,11 @@ import { LazyImport } from './types';
 import { resolveLazyType } from './utilities';
 
 export class DefaultNestFirebaseResolver implements NestFirebaseResolver {
-  public resolveApplicationContext: (moduleCls: any) => Promise<INestApplicationContext> = memoize(
+  public resolveApplicationContext: (moduleCls: unknown) => Promise<INestApplicationContext> = memoize(
     async (moduleCls) => {
       const app = await NestFactory.createApplicationContext(moduleCls);
       app.useLogger(new FirebaseLoggerAdapter());
+
       return app;
     },
   );

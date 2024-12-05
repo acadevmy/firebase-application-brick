@@ -10,7 +10,7 @@ export class CatsController {
 
   @Get()
   @ApiOkResponse({ type: CatDTO, isArray: true })
-  public findAll(): Promise<Array<CatDTO>> {
+  public findAll(): Promise<CatDTO[]> {
     return this.service.findAll();
   }
 

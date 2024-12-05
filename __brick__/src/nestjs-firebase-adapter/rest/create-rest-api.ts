@@ -26,11 +26,12 @@ export function createRestApi(
   return onRequest(optsOrModuleCls as HttpsOptions, async (request, response) => {
     const moduleType = resolveLazyType(moduleCls);
     const handler = await createExpressHandler(moduleType);
+
     return handler(request, response);
   });
 }
 
-const createExpressHandler: (moduleCls: any) => Promise<express.Express> = memoize(
+const createExpressHandler: (moduleCls: unknown) => Promise<express.Express> = memoize(
   async (moduleCls) => {
     const server = express();
     const application = await NestFactory.create(moduleCls, new ExpressAdapter(server));

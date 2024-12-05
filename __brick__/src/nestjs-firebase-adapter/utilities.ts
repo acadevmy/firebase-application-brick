@@ -3,10 +3,11 @@ import { memoize } from 'lodash-es';
 
 import { DefaultExport, LazyImport } from './types';
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export const isDefaultExport = (value: any | DefaultExport): value is DefaultExport =>
   'default' in value;
 
-export const resolveLazyType: <T = any>(lazyImport: LazyImport<T>) => Promise<Type<T>> = memoize(
+export const resolveLazyType: <T = unknown>(lazyImport: LazyImport<T>) => Promise<Type<T>> = memoize(
   async (lazyImport) => {
     let loadedType = await lazyImport();
 

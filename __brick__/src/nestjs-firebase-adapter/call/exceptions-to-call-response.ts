@@ -14,7 +14,7 @@ export const exceptionsToCallResponse = (exception: unknown): HttpsError => {
   return new HttpsError('unknown', exception['message'] ?? '');
 };
 
-const httpExceptionToFirebaseHttpError = (exception: HttpException) => {
+const httpExceptionToFirebaseHttpError = (exception: HttpException): HttpsError => {
   const status = exception.getStatus();
   const functionErrorCode = httpStatusToFunctionsErrorCode(status);
 

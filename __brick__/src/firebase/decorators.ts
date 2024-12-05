@@ -8,6 +8,8 @@ import {
   FIREBASE_STORAGE,
 } from './constants';
 
+type InjectDecorator = PropertyDecorator & ParameterDecorator;
+
 /**
  * Custom injector for Firebase App instance.
  * It injects the Firebase App instance into the class property where it's used.
@@ -17,9 +19,7 @@ import {
  * @InjectFirebaseApp() private readonly firebaseApp: FirebaseApp;
  * ```
  */
-export const InjectFirebaseApp = () => {
-  return Inject(FIREBASE_APP);
-};
+export const InjectFirebaseApp = (): InjectDecorator => Inject(FIREBASE_APP);
 
 /**
  * Custom injector for Firestore instance.
@@ -30,9 +30,7 @@ export const InjectFirebaseApp = () => {
  * @InjectFirestore() private readonly firestore: Firestore;
  * ```
  */
-export const InjectFirestore = () => {
-  return Inject(FIREBASE_FIRESTORE);
-};
+export const InjectFirestore = (): InjectDecorator => Inject(FIREBASE_FIRESTORE);
 
 /**
  * Custom injector for Firebase Auth instance.
@@ -43,9 +41,7 @@ export const InjectFirestore = () => {
  * @InjectFirebaseAuth() private readonly firebaseAuth: FirebaseAuth;
  * ```
  */
-export const InjectFirebaseAuth = () => {
-  return Inject(FIREBASE_AUTH);
-};
+export const InjectFirebaseAuth = (): InjectDecorator => Inject(FIREBASE_AUTH);
 
 /**
  * Custom injector for Firebase Storage instance.
@@ -56,9 +52,7 @@ export const InjectFirebaseAuth = () => {
  * @InjectFirebaseStorage() private readonly firebaseStorage: FirebaseStorage;
  * ```
  */
-export const InjectFirebaseStorage = () => {
-  return Inject(FIREBASE_STORAGE);
-};
+export const InjectFirebaseStorage = (): InjectDecorator => Inject(FIREBASE_STORAGE);
 
 /**
  * Custom injector for Firebase Messaging instance.
@@ -69,6 +63,4 @@ export const InjectFirebaseStorage = () => {
  * @InjectFirebaseMessaging() private readonly firebaseMessaging: FirebaseMessaging;
  * ```
  */
-export const InjectFirebaseMessaging = () => {
-  return Inject(FIREBASE_MESSAGING);
-};
+export const InjectFirebaseMessaging = (): InjectDecorator => Inject(FIREBASE_MESSAGING);

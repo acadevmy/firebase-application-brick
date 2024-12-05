@@ -100,9 +100,10 @@ export function createNestOnCall<T>(
   dtoTypeOrHandler: ClassConstructor<T> | NestOnCallHandler<T>,
   handler?: NestOnCallHandler<T>,
 ): NestOnCall {
+  // eslint-disable-next-line no-magic-numbers
   if (arguments.length === 2) {
     handler = dtoTypeOrHandler as unknown as (opts: NestCallableRequest<T>) => Promise<any>;
-    dtoTypeOrHandler = undefined;
+    dtoTypeOrHandler = void 0;
   }
 
   let nestOnCall: Pick<NestOnCall, 'nestFirebaseResolver'> = {
@@ -120,8 +121,8 @@ export function createNestOnCall<T>(
       const result = await handler({ ...request, container, injectLazyService });
 
       return instanceToPlain(result);
-    } catch (e) {
-      throw exceptionsToCallResponse(e);
+    } catch (error) {
+      throw exceptionsToCallResponse(error);
     }
   });
 

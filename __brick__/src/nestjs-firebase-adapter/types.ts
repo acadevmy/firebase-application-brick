@@ -8,10 +8,7 @@ export interface DefaultExport<T = unknown> {
   default: Type<T>;
 }
 
-export type LazyImport<T = any> = () => Promise<Type<T> | DefaultExport<T>>;
+export type LazyImport<T = unknown> = () => Promise<Type<T> | DefaultExport<T>>;
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 
-export interface InjectLazyService {
-  <T>(module: LazyImport, service: LazyImport<T>): Promise<T>;
-}
+export type InjectLazyService = <T>(module: LazyImport, service: LazyImport<T>) => Promise<T>;

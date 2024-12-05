@@ -16,6 +16,7 @@ export class CatsService {
 
   public async findAll(): Promise<Cat[]> {
     const cats = await this.repository.find();
+
     return this.mapper.toDtos(cats);
   }
 
@@ -46,6 +47,7 @@ export class CatsService {
     cat.name = create.name;
 
     cat = await this.repository.create(cat);
+
     return this.mapper.toDto(cat);
   }
 
