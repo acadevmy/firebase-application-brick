@@ -4,7 +4,6 @@
   "description": "",
   "author": "",
   "private": true,
-  "packageManager": "pnpm@9.1.2",
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {
@@ -18,9 +17,6 @@
     "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx,html}' --fix",
     "test": "vitest --passWithNoTests",
     "test:headless": "vitest run --silent --coverage  --passWithNoTests"
-  },
-  "engines": {
-    "node": "20"
   },
   "main": "dist/main.js",
   "dependencies": {
@@ -77,6 +73,16 @@
     "vite": "^5.4.11",
     "vite-plugin-node": "^4.0.0",
     "vitest": "^2.1.8"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20.10.0",
+    "pnpm": ">=9.15.0"
+  },
+  "pnpm": {
+    "executionEnv": {
+      "nodeVersion": "20.10.0"
+    }
   },
   "nx": {
     "targets": {
