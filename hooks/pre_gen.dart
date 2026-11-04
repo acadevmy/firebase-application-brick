@@ -6,14 +6,41 @@ import 'package:mason/mason.dart';
 import 'constants.dart';
 import 'vault.dart';
 
+const kEnvironments = ['development', 'staging', 'ci', 'production'];
+
 Future<void> run(HookContext context) async {
+  final nonInteractive = isNonInteractive(context);
+
+  if (nonInteractive) {
+    final missing = kEnvironments
+        .map(firebaseTokenEnvKey)
+        .where((key) => readEnv(key) == null)
+        .toList();
+    if (missing.isNotEmpty) {
+      throw Exception(
+        'Missing required inputs in non-interactive mode. '
+        'Set the environment variables: ${missing.join(', ')}. '
+        'Optionally pass the projects with --var firebaseProject<Env>=<id>.',
+      );
+    }
+  }
+
   final Map<String, Project?> selectedProjects = <String, Project?>{};
-  for (final environment in ['development', 'staging', 'ci', 'production']) {
-    final token = runFirebaseLogin(context, environment);
+  for (final environment in kEnvironments) {
+    final token = readEnv(firebaseTokenEnvKey(environment)) ??
+        runFirebaseLogin(context, environment);
 
     final projects = await runFirebaseProjectList(context, token);
-    selectedProjects[environment] =
-        chooseProject(context: context, env: environment, projects: projects);
+    final projectId = readVar(context, firebaseProjectVarKey(environment));
+    if (projectId != null) {
+      selectedProjects[environment] = findProject(
+          env: environment, projectId: projectId, projects: projects);
+    } else if (nonInteractive) {
+      selectedProjects[environment] = null;
+    } else {
+      selectedProjects[environment] =
+          chooseProject(context: context, env: environment, projects: projects);
+    }
   }
 
   final Map<String, String> environments =
@@ -45,6 +72,44 @@ Future<void> run(HookContext context) async {
   });
 
   context.logger.success('Firebase configured successfully 🚀');
+}
+
+bool isNonInteractive(HookContext context) =>
+    context.vars['devmyNonInteractive'] == true || !stdin.hasTerminal;
+
+String firebaseTokenEnvKey(String environment) =>
+    'FIREBASE_TOKEN_${environment.toUpperCase()}';
+
+String firebaseProjectVarKey(String environment) =>
+    'firebaseProject${environment.pascalCase}';
+
+String? readEnv(String key) {
+  final value = Platform.environment[key]?.trim();
+  return value == null || value.isEmpty ? null : value;
+}
+
+String? readVar(HookContext context, String key) {
+  final value = context.vars[key]?.toString().trim();
+  return value == null || value.isEmpty ? null : value;
+}
+
+Project findProject({
+  required String env,
+  required String projectId,
+  required List<Project> projects,
+}) {
+  for (final project in projects) {
+    if (project.id == projectId) {
+      return project;
+    }
+  }
+
+  final available = projects.map((project) => project.id).join(', ');
+  throw Exception(
+    'Firebase project "$projectId" for $env not found '
+    '(--var ${firebaseProjectVarKey(env)}=<id>). '
+    'Available projects: ${available.isEmpty ? 'none' : available}',
+  );
 }
 
 Future<List<Project>> runFirebaseProjectList(
